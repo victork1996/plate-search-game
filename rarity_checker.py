@@ -12,7 +12,7 @@ def get_latest_production_year_and_appearance_count(db, number):
     Returns the latest production year of a car with the specified number in its plate and the number's
      appearance count.
     """
-    return db.execute("SELECT MAX(production_year), COUNT(*) from `records` WHERE `first`=:1 OR "
+    return db.execute("SELECT MAX(`production_year`), COUNT(*) from `records` WHERE `first`=:1 OR "
                       "second=:1 OR `third`=:1;", (number,)).fetchone()
 
 
@@ -41,5 +41,5 @@ def main():
     check_number_rarity(args.records_db_path, args.number_to_check)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
