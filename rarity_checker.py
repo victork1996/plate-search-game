@@ -27,9 +27,9 @@ def check_number_rarity(records_db_path, number_to_check):
         total_count = get_total_record_count(db)
         latest_production_year, appearance_count = get_latest_production_year_and_appearance_count(db, number_to_check)
 
-    print("The number {} appears on {} plates. ".format(number_to_check, appearance_count))
-    print("The chance to find it is 1 in {}.".format(total_count / appearance_count))
-    print("The latest production year of a car with that number is {}.".format(latest_production_year))
+    print(f"The number {number_to_check} appears on {appearance_count} plates out of a total of {total_count:,}.")
+    print(f"The chance to find it is 1 in {total_count/appearance_count}.")
+    print(f"The latest production year of a car with that number is {latest_production_year}.")
 
 
 def main():
