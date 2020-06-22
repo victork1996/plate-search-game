@@ -41,23 +41,20 @@ def split_plate_into_parts(plate_number):
         return int(plate_number[:3]), int(plate_number[3:-3]), int(plate_number[-3:])
 
 
-def insert_csv_line_into_db(fields, db):
+def insert_csv_line_into_db(record, db):
     """
     Inserts a single CSV record into the DB. For now, we're interested only in the record's plate number.
 
-    :param fields: the parsed fields of the CSV record.
+    :param record: the parsed fields of the CSV record.
     :param db: the DB to insert the record into.
     """
-    _PLATE_NUMBER_INDEX = 0
-    _PRODUCTION_YEAR_INDEX = 9
-
-    plate_number = fields[_PLATE_NUMBER_INDEX]
+    plate_number = record["mispar_rechev"]
 
     # Plate numbers don't start with 0's. Any number that starts with a 0 is actually a 7 digit plate number.
     plate_number = plate_number.lstrip("0")
     first, second, third = split_plate_into_parts(plate_number)
 
-    production_year = int(fields[_PRODUCTION_YEAR_INDEX])
+    production_year = int(record["shnat_yitzur"])
     db.execute("INSERT INTO `records` VALUES (?, ?, ?, ?, ?)", (production_year, plate_number, first, second, third))
 
 
@@ -79,12 +76,8 @@ def convert_csv_file_to_db(csv_file_path, output_db_path):
     csv_dialect_name = register_csv_dialect()
 
     with create_memory_db() as db:
-        with open(csv_file_path, "r") as csv_records_file:
-            records_reader = csv.reader(csv_records_file, dialect=csv_dialect_name)
-
-            # Skip the first line, it contains headers
-            next(records_reader)
-
+        with open(csv_file_path) as csv_records_file:
+            records_reader = csv.DictReader(csv_records_file, dialect=csv_dialect_name)
             for record in records_reader:
                 insert_csv_line_into_db(record, db)
 
