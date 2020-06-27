@@ -1,6 +1,7 @@
 import sqlite3
 import argparse
 import csv
+import time
 
 
 def register_csv_dialect():
@@ -72,17 +73,25 @@ def write_output_db_file(src_db, output_db_path):
 def convert_csv_file_to_db(csv_file_path, output_db_path):
     """
     Converts a csv file of car records to an sqlite3 database.
+
+    :return: the amount of converted records
     """
+    _FILE_ENCODING = 'cp1252'
+
     csv_dialect_name = register_csv_dialect()
 
     with create_memory_db() as db:
-        with open(csv_file_path) as csv_records_file:
+        with open(csv_file_path, encoding=_FILE_ENCODING, errors='replace') as csv_records_file:
             records_reader = csv.DictReader(csv_records_file, dialect=csv_dialect_name)
             for record in records_reader:
                 insert_csv_line_into_db(record, db)
 
+            record_count = records_reader.line_num
+
         db.commit()
         write_output_db_file(db, output_db_path)
+
+    return record_count
 
 
 def main():
@@ -90,8 +99,10 @@ def main():
     parser.add_argument("csv_file_path")
     parser.add_argument("output_db_path")
     args = parser.parse_args()
-    convert_csv_file_to_db(args.csv_file_path, args.output_db_path)
-
+    start_time = int(time.time())
+    record_count = convert_csv_file_to_db(args.csv_file_path, args.output_db_path)
+    end_time = int(time.time())
+    print(f"Parsed {record_count:,} records in {end_time-start_time} seconds.")
 
 if __name__ == "__main__":
     main()
