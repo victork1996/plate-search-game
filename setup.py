@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='plates-game',
-    version='1.0.0',
+    version='1.1.0',
     packages=['plates_game'],
     url='',
     license='',
