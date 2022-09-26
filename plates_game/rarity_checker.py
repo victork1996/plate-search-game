@@ -43,7 +43,7 @@ def estimate_difficulty_level(records_db_path, number_to_check):
         raise ValueError("Number should be between 0 and 999")
 
     with sqlite3.connect(records_db_path) as db:
-        sorted_appearance_count = get_sorted_number_appearance_count(db)
+        sorted_appearance_count = _get_sorted_counts(db)
         _, appearance_count = get_latest_production_year_and_appearance_count(db, number_to_check)
         return math.floor((sorted_appearance_count.index(appearance_count)) / len(sorted_appearance_count) * 100) + 1
 
